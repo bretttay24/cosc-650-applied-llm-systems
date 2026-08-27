@@ -1,0 +1,19 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Jupyter Noteobooks Checkpoints
+.ipynb_checkpoints/
+
+# Secret Keys
+.env
+
+# VS Code settings
+.vscode/
