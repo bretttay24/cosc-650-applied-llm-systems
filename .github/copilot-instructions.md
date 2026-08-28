@@ -1,0 +1,1 @@
+See the `AGENTS.md` file for project structure and conventions.
