@@ -1,19 +1,36 @@
 # Python-generated files
 __pycache__/
-*.py[oc]
+*.py[cod]
 build/
 dist/
 wheels/
-*.egg-info
+*.egg-info/
 
 # Virtual environments
-.venv
+.venv/
+.Python
 
-# Jupyter Noteobooks Checkpoints
+# Test and static-analysis caches
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.mypy_cache/
+.pyright/
+.ruff_cache/
+
+# Jupyter notebook checkpoints
 .ipynb_checkpoints/
 
-# Secret Keys
+# Local secrets and configuration
 .env
+.env.*
+!.env.example
 
 # VS Code settings
 .vscode/
+
+# Operating system and editor files
+.DS_Store
+*.swp
+*.swo
