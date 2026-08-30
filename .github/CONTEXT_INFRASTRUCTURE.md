@@ -1,6 +1,6 @@
 # GitHub Context Infrastructure
 
-This directory contains version-controlled context and workflow customizations used while completing the course. They are part of the repository's applied LLM systems work: instead of supplying every expectation in an ad hoc chat prompt, the repository makes important context repeatable, task-aware, reviewable, and available to other coding-agent sessions.
+The `.github/` directory contains version-controlled context and workflow customizations used while completing the course. They are part of the repository's applied LLM systems work: instead of supplying every expectation in an ad hoc chat prompt, the repository makes important context repeatable, task-aware, reviewable, and available to other coding-agent sessions.
 
 These files do not replace critical review of model output. They provide a documented starting point for how an assistant should understand the project, interact with notebooks, and support recurring development tasks.
 

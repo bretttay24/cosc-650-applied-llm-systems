@@ -12,7 +12,7 @@ The repository is built to be read by humans and LLMs. The goal is disciplined d
 
 The repository also treats context engineering as part of applied LLM systems work. Version-controlled instructions give coding agents durable project conventions, path-specific guidance constrains how they interact with course notebooks, and agent skills package recurring GitHub workflow tasks. This makes the context supplied to an assistant visible, reviewable, and reusable instead of relying only on ad hoc chat prompts.
 
-In Week 2, both existing .github/skills will also be explored as `.prompt.md` files. Comparing the same tasks as skills and manually invoked prompts will help clarify which format is better suited to focused requests, multi-step workflows, and automatic discovery. See the [`.github` context infrastructure guide](.github/README.md) for definitions, the current implementation, and the experiment roadmap.
+In Week 2, both existing .github/skills will also be explored as `.prompt.md` files. Comparing the same tasks as skills and manually invoked prompts will help clarify which format is better suited to focused requests, multi-step workflows, and automatic discovery. See the [`.github` context infrastructure guide](.github/CONTEXT_INFRASTRUCTURE.md) for definitions, the current implementation, and the experiment roadmap.
 
 ## Weekly Modules
 
@@ -39,7 +39,7 @@ AGENTS.md               Project context and conventions, read by AI assistants
 README.md               This file
 ```
 
-The [`.github` context infrastructure guide](.github/README.md) explains how each customization supports the coursework.
+The [`.github` context infrastructure guide](.github/CONTEXT_INFRASTRUCTURE.md) explains how each customization supports the coursework.
 
 ## Technologies
 
