@@ -39,5 +39,5 @@ week-*/.tiktoken_cache/
 *.swo
 
 # Canvas HTML submission files 
-week-*/*.html
+# week-*/*.html
 
