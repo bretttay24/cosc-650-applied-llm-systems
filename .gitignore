@@ -30,7 +30,16 @@ htmlcov/
 # VS Code settings
 .vscode/
 
+# Local weekly notes and workflow drafts
+/notes/week-*/
+week-*/.tiktoken_cache/
 # Operating system and editor files
 .DS_Store
 *.swp
 *.swo
+
+.github/skills/
+
+# Canvas HTML submission files 
+week-*/*.html
+
