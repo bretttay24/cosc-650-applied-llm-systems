@@ -4,7 +4,7 @@ description: Drafts and validates GitHub Issues, issue-linked branch names, and 
 license: MIT
 metadata:
   author: Brett Taylor
-  version: "1.1"
+  version: "1.2"
 ---
 
 # Issue-Linked Git Workflow
@@ -37,7 +37,7 @@ When the user asks for an issue or pull request draft, identify the active cours
 3. Make focused changes, including relevant tests and documentation.
 4. Verify that related commits follow the convention below when reviewing issue and pull request linkage.
 5. Push the branch and open a pull request only when the user explicitly requests those actions.
-6. Draft the pull request in the active week's `pr_draft.md`, linking it to the issue and describing what changed, why, and how it was validated. The user creates the pull request on GitHub manually.
+6. Draft the pull request in the active week's `pr_draft.md`, linking it to the issue and describing what changed, why it matters, how it was implemented, and how the outcome was tested. The user creates the pull request on GitHub manually.
 7. Merge only after review. Branch deletion remains a manual decision unless explicitly requested.
 
 ## Issue Drafting
@@ -124,18 +124,27 @@ The subject is focused and imperative, completing "If applied, this commit will 
 
 ## Pull Request Drafting
 
-Write the completed draft to the active week's `notes/week-<number>/agent-skills-output/pr_draft.md`. Use the commit outcome as the pull request title when it accurately summarizes the complete change.
+Write the completed draft to the active week's `notes/week-<number>/agent-skills-output/pr_draft.md`. Use an outcome-focused title that reflects the issue being resolved.
+
+Lead with the issue's outcome rather than repository maintenance or supporting infrastructure. Include significant supporting changes for transparency, but keep them secondary unless they are the subject of the issue. Ground results in the actual source material or inputs and explain what the measurements mean, not just the resulting numbers.
+
+Use `What`, `Why`, `How`, and `Testing` sections. Testing should report behavior-oriented evidence relevant to the issue, such as tests that pass, notebook execution, or manual output verification. Do not include internal checks performed only to draft or validate the pull request, such as branch inspection, secret scans, commit-format review, or diff whitespace checks, unless they reveal a limitation that affects the change.
 
 ```markdown
+Title: Concise outcome-focused title
+
 ## What
-Summarize the completed change.
+Summarize the issue outcome and its key results.
 
 ## Why
-Explain the problem or goal addressed by the change.
+Explain the problem, why it matters, and the result's practical meaning.
 
-## Validation
-- List tests, notebook runs, or checks performed.
-- Note anything that could not be validated.
+## How
+Describe the relevant inputs or sources and the implementation or analysis method. Link source material when appropriate.
+
+## Testing
+- List behavior-focused tests, notebook runs, or manual verification.
+- Note limitations that affect confidence in the result.
 
 Fixes #27
 ```
