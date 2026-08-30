@@ -38,8 +38,6 @@ week-*/.tiktoken_cache/
 *.swp
 *.swo
 
-.github/skills/
-
 # Canvas HTML submission files 
 week-*/*.html
 
