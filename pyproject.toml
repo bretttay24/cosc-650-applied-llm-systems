@@ -9,6 +9,9 @@ dependencies = [
     "python-dotenv",
     "ipykernel",
     "tiktoken",
+    "transformers>=5.16.1",
+    "numpy>=2.5.2",
+    "matplotlib>=3.11.1",
 ]
 
 [dependency-groups]

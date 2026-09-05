@@ -31,8 +31,10 @@ htmlcov/
 .vscode/
 
 # Local weekly notes and workflow drafts
-/notes/week-*/
+/notes/
 week-*/.tiktoken_cache/
+week-*/discussion_*
+.hf_cache/
 # Operating system and editor files
 .DS_Store
 *.swp
