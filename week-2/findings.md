@@ -2,7 +2,7 @@
 
 ## Scope
 
-This notebook examined how temperature, top-k, and top-p change DistilGPT-2's next-token distribution for the prompt, "The most famous movie star in 2026 is".
+This file is an overview of the notebook `week2_inference_sampling.ipynb` which examined how temperature, top-k, and top-p change DistilGPT-2's next-token distribution for the prompt, `"The most famous movie star in 2026 is"`.
 
 ## Part 3: Predictions vs. Actual Results
 
