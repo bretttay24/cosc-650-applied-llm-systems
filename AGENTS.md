@@ -29,3 +29,14 @@ prompt engineering, function/tool calling, retrieval-augmented generation, fine-
 - Delete branches
 - Push directly to `main`
 - Commit API keys or any file in .env
+
+## AI Usage (Disclose per Course Policy)
+### Week 2 
+Github Copilot was used to:
+* Help make GH commit messages, primarily with `GPT-5.6 Luna`
+* Edit my hand typed analysis making it more consice  `GPT - 5.6 Terra`
+* Generate code for matplotlib visuals based on my description / decisions of variables and structure
+* Summarize my findings and my analysis and create the `findings.md`
+* Generate first draft of research GH issue. 
+* After working this process generated `.github\prompts\research-finding-issue.prompt.md` 
+* Update `.github\CONTEXT_INFRASTRUCTURE.md`
