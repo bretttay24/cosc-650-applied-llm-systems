@@ -34,6 +34,7 @@ htmlcov/
 /notes/
 week-*/.tiktoken_cache/
 week-*/discussion_*
+week-*/discussion-*
 .hf_cache/
 # Operating system and editor files
 .DS_Store
