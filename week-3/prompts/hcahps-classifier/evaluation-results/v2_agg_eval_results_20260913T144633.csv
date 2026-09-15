@@ -1,0 +1,2 @@
+prompt_name,prompt_version,evaluated_at,label_accuracy,confidence_accuracy,average_semantic_similarity,average_input_tokens,average_output_tokens,test_case_count
+hcahps-classifier,v2,20260913T144633,1.0,0.8,0.6674,1173.85,38.8,20

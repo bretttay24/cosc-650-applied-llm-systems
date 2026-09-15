@@ -4,7 +4,7 @@ description: Drafts and validates GitHub Issues, issue-linked branch names, and 
 license: MIT
 metadata:
   author: Brett Taylor
-  version: "1.3"
+  version: "1.4"
 ---
 
 # Issue-Linked Git Workflow
@@ -137,7 +137,9 @@ The subject is focused and imperative, completing "If applied, this commit will 
 
 Write the completed draft to the active week's `notes/week-<number>/agent-skills-output/pr_draft.md`. Use an outcome-focused title that reflects the issue being resolved.
 
-Lead with the issue's outcome rather than repository maintenance or supporting infrastructure. Include significant supporting changes for transparency, but keep them secondary unless they are the subject of the issue. Ground results in the active week's `findings.md` and explain both what the measurements mean and the developer's reasoning about why they occurred.
+Frame the title and `What` section around the primary engineering or course objective demonstrated by the work. Treat the experiment's domain scenario as the concrete application of that objective. Do not let one case-specific metric obscure the broader objective when versioning, evaluation, reproducibility, or another engineering practice is itself the subject of the work.
+
+Lead with the issue's outcome rather than routine repository maintenance. Include significant supporting changes for transparency, but keep them secondary unless those artifacts are part of the engineering objective. For example, versioned prompts, shared configuration, saved evaluations, and changelogs are primary outcomes when the work studies prompts as engineering artifacts. Ground results in the active week's `findings.md` and explain both what the measurements mean and the developer's reasoning about why they occurred.
 
 Before drafting, use [the findings-rationale guide](references/findings-rationale.md) to assess whether `findings.md` contains a substantive causal explanation. A sufficient rationale connects an underlying mechanism or concept to specific observed evidence and acknowledges uncertainty, limitations, or plausible contributing factors where appropriate.
 
@@ -147,25 +149,41 @@ If the rationale is absent, merely restates the findings, or makes unsupported c
 2. Pause PR drafting until the developer responds or updates `findings.md`.
 3. Incorporate only the reasoning the developer provides. Preserve uncertainty and do not answer the reflection questions on the developer's behalf.
 
-Use `What`, `Why`, `How`, and `Testing` sections. Testing should report behavior-oriented evidence relevant to the issue, such as tests that pass, notebook execution, or manual output verification. Do not include internal checks performed only to draft or validate the pull request, such as branch inspection, secret scans, commit-format review, or diff whitespace checks, unless they reveal a limitation that affects the change.
+When the work compares a baseline with an intervention, preserve the developer's first-person causal reasoning and make the controlled comparison clear: identify the baseline, the isolated change, the variables held constant, the supporting evidence, and the limits of generalization. Correct grammar and improve clarity without replacing the developer's explanation with agent-supplied reasoning.
+
+Use `What`, `Why`, `How`, and `Testing` sections. Add `Related Issue` and `Links` sections when an issue and publication artifacts are available:
+
+- In `Related Issue`, provide a visible Markdown link containing the issue number and title. Verify the issue exists; do not invent its title or URL.
+- At the end of the draft, use `Fixes #<issue-number>` only when merging should close the issue, or `Refs #<issue-number>` when it should not.
+- In `Links`, list each developer-requested artifact as its own Markdown link. Do not bury these links inside descriptive `How` bullets.
+- When the branch is already pushed to GitHub, link artifacts to that branch so newly added files resolve before merge. Verify the repository, branch, path, and filename before drafting the URL.
+- Keep `How` focused on the implementation and analysis workflow even when the same artifacts appear in `Links`.
+
+Testing should report behavior-oriented evidence relevant to the issue, such as tests that pass, notebook execution, or manual output verification. Do not include internal checks performed only to draft or validate the pull request, such as branch inspection, secret scans, commit-format review, or diff whitespace checks, unless they reveal a limitation that affects the change.
 
 ```markdown
 Title: Concise outcome-focused title
 
 ## What
-Summarize the issue outcome and headline findings from the active week's `findings.md`.
+Summarize the primary engineering or course objective, the domain scenario used to demonstrate it, and headline findings from the active week's `findings.md`.
 
 ## Why
 Explain why the result matters and present the developer's reasoning about its underlying cause. Connect the proposed mechanism to observed evidence and relevant current or prior course concepts or readings. State uncertainty, limitations, and plausible contributing factors where appropriate.
 
 ## How
-Describe the relevant inputs or sources and the implementation or analysis method. Link source material when appropriate.
+Describe the relevant inputs, controlled changes, implementation artifacts, and analysis method.
 
 ## Testing
 - List behavior-focused tests, notebook runs, or manual verification.
 - Note limitations that affect confidence in the result.
 
-Refs #<issue-number>
+## Related Issue
+- [#<issue-number>: Verified issue title](https://github.com/<owner>/<repo>/issues/<issue-number>)
+
+## Links
+- [Named artifact](https://github.com/<owner>/<repo>/blob/<pushed-branch>/<path>)
+
+Fixes #<issue-number>
 ```
 
 Use `Fixes #27` only when merging the pull request should close issue 27. Use `Refs #27` when the pull request relates to the issue but does not fully resolve it.
@@ -179,7 +197,11 @@ Before returning a draft, confirm:
 - The commit subject is imperative and passes the sentence test.
 - The issue provides sufficient context, reproducible steps, a practical direction, and relevant proposed labels.
 - The pull request's findings agree with the active week's `findings.md`.
+- The title and `What` section foreground the primary engineering or course objective, with the domain scenario presented as its application when appropriate.
 - The `Why` section contains the developer's causal reasoning, not only repeated findings, impacts, or an agent-supplied explanation.
 - The rationale connects a possible mechanism to evidence and preserves relevant uncertainty, alternatives, and limitations.
+- A controlled comparison identifies the baseline, isolated intervention, constants, supporting evidence, and limits when those elements apply.
+- The `Related Issue` section visibly links the verified issue, and the closing keyword matches whether the PR should resolve it.
+- Each developer-requested artifact appears as a separate entry in `Links`, and pushed-branch URLs use verified repository paths.
 - The proposed commit includes only staged changes.
 - No secret or `.env` value appears in generated text.

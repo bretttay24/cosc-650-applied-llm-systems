@@ -5,7 +5,7 @@ applyTo: "week-*/*.ipynb"
 ---
 # Local Jupyter Notebook Guidelines
 
-- Only add or change code inside code cells marked `TODO (you)`. Treat all other code cells as provided and read-only.
+
 - Target local Jupyter running in the repository's UV-managed Python 3.14+ environment.
 - Do not add Google Colab integration, Colab badges, Drive mounts, or Colab-specific setup instructions.
 - Leave existing Colab-specific starter content unchanged unless the user explicitly asks to remove it.

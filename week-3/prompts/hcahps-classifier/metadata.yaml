@@ -1,0 +1,9 @@
+name: hcahps-classifier
+active_version: v2
+model: gpt-4o
+params:
+  temperature: 0.2
+  max_output_tokens: 450
+description: |
+  This prompt is designed to classify HCAHPS survey responses into specific categories,
+  providing a rationale and confidence level for each classification.
