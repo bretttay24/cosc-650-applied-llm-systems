@@ -12,6 +12,11 @@ dependencies = [
     "transformers>=5.16.1",
     "numpy>=2.5.2",
     "matplotlib>=3.11.1",
+    "azure-ai-projects>=2.6.0",
+    "azure-identity>=1.25.3",
+    "pydantic>=2.13.5",
+    "sentence-transformers>=6.0.1",
+    "pandas>=3.0.5",
 ]
 
 [dependency-groups]
