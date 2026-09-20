@@ -15,8 +15,10 @@ dependencies = [
     "azure-ai-projects>=2.6.0",
     "azure-identity>=1.25.3",
     "pydantic>=2.13.5",
+    "jsonschema>=4.25.1",
     "sentence-transformers>=6.0.1",
     "pandas>=3.0.5",
+    "mlflow>=3.16.1",
 ]
 
 [dependency-groups]
