@@ -45,4 +45,4 @@ week-*/azure-prompt-eval/
 docker/
 docker.env
 mlflow/
-
+.github/skills/mlflow*
