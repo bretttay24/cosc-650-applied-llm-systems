@@ -1,0 +1,3 @@
+POSTGRES_USER=rag
+POSTGRES_PASSWORD=change-me-with-your-password
+POSTGRES_DB=rag

@@ -57,3 +57,11 @@ Github Copilot was used to:
 * Generate portions of code based on requested analysis
 * Summarize findings and create the `findings.md`
 * Generate the first draft of a research GH issue
+
+### Week 5
+
+Github Copilot was used to:
+* Edit my hand typed analysis, making it more concise and grammatically correct
+* Generate portions of code based on requested analysis
+* Summarize findings and create the `findings.md`
+* Generate the first draft of a research GH issue

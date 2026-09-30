@@ -19,6 +19,12 @@ dependencies = [
     "sentence-transformers>=6.0.1",
     "pandas>=3.0.5",
     "mlflow>=3.16.1",
+    "scikit-learn>=1.9.1",
+    "langchain>=1.4.2",
+    "langchain-text-splitters>=1.1.2",
+    "pyaml>=26.7.0",
+    "pgvector>=0.5.0",
+    "psycopg[binary]>=3.3.6",
 ]
 
 [dependency-groups]
