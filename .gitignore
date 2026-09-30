@@ -42,7 +42,8 @@ week-*/azure-prompt-eval/
 *.swp
 *.swo
 
-docker/
+docker/mlflow/
 docker.env
 mlflow/
+.github/skills/mlflow-rag-tracing
 
