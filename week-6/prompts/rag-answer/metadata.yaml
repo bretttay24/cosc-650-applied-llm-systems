@@ -1,0 +1,9 @@
+name: rag-answer
+active_version: v1
+model: gpt-4o
+params:
+  temperature: 0.0
+  max_output_tokens: 800
+description: |
+  Answer a question using only the numbered context chunks retrieved from the docs corpus;
+  cite chunk numbers and say so when the context doesn't contain the answer.
