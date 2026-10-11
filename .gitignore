@@ -37,6 +37,10 @@ week-*/discussion_*
 week-*/discussion-*
 week-*/azure-prompt-eval/
 .hf_cache/
+
+# Generated notebook HTML exports
+/week-*/*.html
+
 # Operating system and editor files
 .DS_Store
 *.swp
