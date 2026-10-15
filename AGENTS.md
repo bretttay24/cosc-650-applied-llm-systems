@@ -18,11 +18,9 @@ prompt engineering, function/tool calling, retrieval-augmented generation, fine-
 - Use UV for dependency management and project commands, including `uv sync` and `uv run`.
 - Store API keys and other environment variables in the local `.env` file; load them with `python-dotenv` when needed.
 - tiktoken is used for tokenization experiments
-- Begin work with a GitHub Issue, then create a branch named `<developer_initials>_<issue-number>`, such as `BT_2`.
 - Make focused changes that include relevant tests and documentation.
-- Use descriptive, imperative commit messages that reference the issue. Each message should complete the sentence: "If applied, this commit will ___." For example: `Add token-count tests`.
+- Use descriptive, imperative commit messages. Reference an issue when one applies. Each message should complete the sentence: "If applied, this commit will ___." For example: `Add token-count tests`.
 - Open a pull request for review before merging.
-
 
 ## Do Not
 - Delete files or directories without confirming first
@@ -47,7 +45,8 @@ Github Copilot was used to:
 * Edit my hand typed analysis, making it more concise and grammatically correct
 * Generate portions of code based on requested analysis
 * Summarize findings and create the `findings.md`
-* Generate the first draft of a research GH issue
+* Use `research-finding-issue.prompt.md` to create the first draft of a research GH issue
+* Use `issue-linked-git-workflow/SKILL.md` to create the PR draft
 * Generate prompt test-suite inputs and outputs, which I verified
 
 ### Week 4
@@ -56,12 +55,30 @@ Github Copilot was used to:
 * Edit my hand typed analysis, making it more concise and grammatically correct
 * Generate portions of code based on requested analysis
 * Summarize findings and create the `findings.md`
-* Generate the first draft of a research GH issue
+* Use `research-finding-issue.prompt.md` to create the first draft of a research GH issue
+* Use `issue-linked-git-workflow/SKILL.md` to create the PR draft
 
 ### Week 5
-
 Github Copilot was used to:
 * Edit my hand typed analysis, making it more concise and grammatically correct
 * Generate portions of code based on requested analysis
 * Summarize findings and create the `findings.md`
-* Generate the first draft of a research GH issue
+* Use `research-finding-issue.prompt.md` to create the first draft of a research GH issue
+* Use `issue-linked-git-workflow/SKILL.md` to create the PR draft
+
+### Week 6
+Github Copilot was used to:
+* Edit my hand typed analysis, making it more concise and grammatically correct
+* Generate portions of code based on requested analysis
+* Summarize findings and create the `findings.md`
+* Use `research-finding-issue.prompt.md` to create the first draft of a research GH issue
+* Use `issue-linked-git-workflow/SKILL.md` to create the PR draft
+
+### Week 7
+Github Copilot was used to:
+* Edit my hand typed analysis, making it more concise and grammatically correct
+* Generate portions of code based on requested analysis
+* Summarize findings and create the `findings.md`
+* Use `research-finding-issue.prompt.md` to create the first draft of a research GH issue
+* Use `issue-linked-git-workflow/SKILL.md` to create the PR draft
+* Microsoft Foundry Synthetic Datasets for Fine tuning were created with GPT-5.4
