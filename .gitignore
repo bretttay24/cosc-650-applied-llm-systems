@@ -19,6 +19,10 @@ htmlcov/
 .pyright/
 .ruff_cache/
 
+# Local implementation-verification tests
+/week-8/toolbox/test_tools.py
+/week-8/evaluations/agent_evals/tests/
+
 # Jupyter notebook checkpoints
 .ipynb_checkpoints/
 
