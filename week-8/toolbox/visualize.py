@@ -2,14 +2,14 @@ from pathlib import Path
 from typing import Annotated
 
 import matplotlib.pyplot as plt
-from agent_framework import tool
+from agent_framework import FunctionInvocationContext, tool
 from matplotlib.ticker import MaxNLocator
 from mlflow import start_span
 from mlflow.entities import SpanType
 from mlflow.tracing.attachments import Attachment
 from pydantic import BaseModel, ConfigDict, Field
 
-from .ledger import GroupBy, LEDGER
+from .ledger import GroupBy, get_session_ledger
 
 PlotGroupByField = Annotated[GroupBy, Field(description="The recorded field shown on the chart's category axis.")]
 
@@ -29,9 +29,9 @@ class PlotDistributionInput(BaseModel):
     ),
     schema=PlotDistributionInput,
 )
-def plot_distribution(group_by: PlotGroupByField) -> dict[str, object]:
-    """Create a bar chart from classifications in the shared ledger."""
-    summary = LEDGER.summarize(group_by)
+def plot_distribution(group_by: PlotGroupByField, context: FunctionInvocationContext) -> dict[str, object]:
+    """Create a bar chart from classifications in the session ledger."""
+    summary = get_session_ledger(context.session).summarize(group_by)
 
     if summary["total_comments"] == 0:
         return {"created": False, "message": "No recorded classifications are available to plot.", "summary": summary}

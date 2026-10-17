@@ -1,9 +1,9 @@
 from typing import Annotated
 
-from agent_framework import tool
+from agent_framework import FunctionInvocationContext, tool
 from pydantic import BaseModel, ConfigDict, Field
 
-from .ledger import GroupBy, LEDGER
+from .ledger import GroupBy, get_session_ledger
 
 SummaryGroupByField = Annotated[GroupBy, Field(description="The recorded field used to group the summary results.")]
 
@@ -23,6 +23,6 @@ class GetSummaryInput(BaseModel):
     ),
     schema=GetSummaryInput,
 )
-def get_summary(group_by: SummaryGroupByField) -> dict[str, object]:
+def get_summary(group_by: SummaryGroupByField, context: FunctionInvocationContext) -> dict[str, object]:
     """Summarize recorded comment themes by label or confidence."""
-    return LEDGER.summarize(group_by)
+    return get_session_ledger(context.session).summarize(group_by)

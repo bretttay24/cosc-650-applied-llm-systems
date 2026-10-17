@@ -1,6 +1,8 @@
 from collections import Counter
 from typing import Literal, TypedDict
 
+from agent_framework import AgentSession
+
 HcahpsTheme = Literal[
     "communication_nurses",
     "communication_doctors",
@@ -14,6 +16,7 @@ HcahpsTheme = Literal[
 ]
 ConfidenceLevel = Literal["low", "medium", "high"]
 GroupBy = Literal["label", "confidence"]
+SESSION_LEDGER_KEY = "classification_ledger"
 
 
 class ClassificationEntry(TypedDict):
@@ -63,4 +66,15 @@ class ClassificationLedger:
         }
 
 
-LEDGER = ClassificationLedger()
+def get_session_ledger(session: AgentSession | None) -> ClassificationLedger:
+    """Return the classification ledger owned by the active agent session."""
+    if session is None:
+        raise RuntimeError("Classification tools require an active agent session")
+
+    ledger = session.state.get(SESSION_LEDGER_KEY)
+    if ledger is None:
+        ledger = ClassificationLedger()
+        session.state[SESSION_LEDGER_KEY] = ledger
+    elif not isinstance(ledger, ClassificationLedger):
+        raise TypeError(f"Session state key {SESSION_LEDGER_KEY!r} must contain a ClassificationLedger")
+    return ledger
