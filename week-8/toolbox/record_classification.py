@@ -1,9 +1,9 @@
 from typing import Annotated
 
-from agent_framework import tool
+from agent_framework import FunctionInvocationContext, tool
 from pydantic import BaseModel, ConfigDict, Field
 
-from .ledger import LEDGER, ConfidenceLevel, HcahpsTheme
+from .ledger import ConfidenceLevel, HcahpsTheme, get_session_ledger
 
 CommentIdField = Annotated[int, Field(ge=1, description="The positive integer ID for the patient comment.")]
 HcahpsThemeField = Annotated[HcahpsTheme, Field(description="The single primary HCAHPS-aligned theme for the patient comment.")]
@@ -29,6 +29,8 @@ class RecordClassificationInput(BaseModel):
     ),
     schema=RecordClassificationInput,
 )
-def record_classification(comment_id: CommentIdField, label: HcahpsThemeField, confidence: ConfidenceField, rationale: RationaleField) -> dict[str, int | str]:
-    """Record one validated feedback-theme classification in the shared ledger."""
-    return LEDGER.record(comment_id, label, confidence, rationale)
+def record_classification(
+    comment_id: CommentIdField, label: HcahpsThemeField, confidence: ConfidenceField, rationale: RationaleField, context: FunctionInvocationContext
+) -> dict[str, int | str]:
+    """Record one validated feedback-theme classification in the session ledger."""
+    return get_session_ledger(context.session).record(comment_id, label, confidence, rationale)
