@@ -15,6 +15,7 @@ from typesafe_sdk import Noul, TypeSafeClient
 
 load_dotenv()
 
+ENABLE_SENSITIVE_DATA = os.getenv("ENABLE_SENSITIVE_DATA", "false").lower() == "true"
 CLASSIFICATION_THRESHOLD = 0.5
 DECISION_MODEL = "Decision-1"
 DECISION_TIMEOUT_SECONDS = 30.0
@@ -43,6 +44,10 @@ def _call_decision_api(query: str) -> float:
             response = client.system_one(
                 state=query, questions={"needs_classification": Noul(instructions="Is this user query asking for a classification task, or does it need classification?")}
             )
+            token_usage = {key: value for key, value in {"input_tokens": response.usage.input_tokens, "output_tokens": response.usage.output_tokens}.items() if value is not None}
+            if token_usage:
+                token_usage["total_tokens"] = sum(token_usage.values())
+                span.set_attributes({"mlflow.chat.tokenUsage": token_usage, "mlflow.llm.model": response.model})
             classification_request_probability = float(response.nouls["needs_classification"].noul)
             span.set_outputs({"needs_classification": {"probability": classification_request_probability}})
 
@@ -113,7 +118,17 @@ class DynamicPromptingMiddleware(AgentMiddleware):
 
                     final_examples = await asyncio.wait_for(asyncio.to_thread(_retrieve_sync, query), timeout=RETRIEVAL_TIMEOUT_SECONDS)
                     final_ids = [str(candidate.get("chunk_uid", "")) for candidate in final_examples]
-                    enriched_query = format_enriched_query(query, final_examples)
+                    with mlflow.start_span(name="few_shot_prompt_assembly", span_type=SpanType.PARSER) as prompt_span:
+                        prompt_inputs: dict[str, Any] = {"reranked_example_ids": final_ids}
+                        if ENABLE_SENSITIVE_DATA:
+                            prompt_inputs.update({"original_query": query, "reranked_examples": final_examples})
+                        prompt_span.set_inputs(prompt_inputs)
+
+                        enriched_query = format_enriched_query(query, final_examples)
+                        prompt_outputs: dict[str, Any] = {"enriched_prompt_length": len(enriched_query)}
+                        if ENABLE_SENSITIVE_DATA:
+                            prompt_outputs["enriched_user_prompt"] = enriched_query
+                        prompt_span.set_outputs(prompt_outputs)
                     context.messages[-1] = Message(role="user", contents=[enriched_query])
                     enriched = True
 

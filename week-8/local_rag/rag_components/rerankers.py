@@ -128,6 +128,17 @@ def rerank_with_jev(query, candidates, *, top_n=None, threshold=None, client=Non
     with mlflow.start_span(name="jev_model_call", span_type=SpanType.LLM) as span:
         span.set_inputs({"text": {"query": query, "documents": state["documents"]}, "model": model})
         response = client.system_one(state=state, questions=questions, model=model)
+        token_usage = {
+            key: value
+            for key, value in {
+                "input_tokens": response.usage.input_tokens,
+                "output_tokens": response.usage.output_tokens,
+            }.items()
+            if value is not None
+        }
+        if token_usage:
+            token_usage["total_tokens"] = sum(token_usage.values())
+            span.set_attributes({"mlflow.chat.tokenUsage": token_usage, "mlflow.llm.model": response.model})
         relevance_probabilities = {candidate_id: float(response.answers[candidate_id].noul) for candidate_id in candidate_ids}
         span.set_outputs({"relevance_probabilities": relevance_probabilities})
 
