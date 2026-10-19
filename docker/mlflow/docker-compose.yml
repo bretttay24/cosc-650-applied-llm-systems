@@ -1,0 +1,47 @@
+name: mlflow-local
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: mlflow-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-mlflow}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-mlflow}
+      POSTGRES_DB: ${POSTGRES_DB:-mlflow}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-mlflow} -d ${POSTGRES_DB:-mlflow}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    # Uncomment only if you want to inspect the DB from the host.
+    ports:
+      - "127.0.0.1:55432:5432"
+
+  mlflow:
+    build: .
+    container_name: mlflow-server
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "5000:5000"
+    volumes:
+      - mlartifacts:/mlartifacts
+    environment:
+      # Server-side cost computation for LLM spans.
+      MLFLOW_ENABLE_TOKEN_USAGE_TRACKING: "true"
+    command: >
+      mlflow server
+      --host 0.0.0.0
+      --port 5000
+      --backend-store-uri postgresql://${POSTGRES_USER:-mlflow}:${POSTGRES_PASSWORD:-mlflow}@postgres:5432/${POSTGRES_DB:-mlflow}
+      --serve-artifacts
+      --artifacts-destination /mlartifacts
+
+volumes:
+  pgdata:
+  mlartifacts:
