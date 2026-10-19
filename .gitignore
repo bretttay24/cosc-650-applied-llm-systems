@@ -19,6 +19,10 @@ htmlcov/
 .pyright/
 .ruff_cache/
 
+# Local implementation-verification tests
+/week-8/toolbox/test_tools.py
+/week-8/evaluations/tests/
+
 # Jupyter notebook checkpoints
 .ipynb_checkpoints/
 
@@ -37,6 +41,7 @@ week-*/discussion_*
 week-*/discussion-*
 week-*/azure-prompt-eval/
 .hf_cache/
+data-generation.md
 
 # Generated notebook HTML exports
 /week-*/*.html
@@ -46,7 +51,6 @@ week-*/azure-prompt-eval/
 *.swp
 *.swo
 
-docker/mlflow/
+
 docker.env
-mlflow/
 .github/skills/mlflow*

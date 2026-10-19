@@ -1,0 +1,10 @@
+name: hcahps-classifier
+active_version: v1
+model: "gpt-5.6-luna"
+params:
+  temperature: 0.2
+  reasoning: 
+    effort: low
+description: |
+  Classifies supplemental patient-experience comments into HCAHPS-aligned themes,
+  with a rationale and confidence level for each classification.

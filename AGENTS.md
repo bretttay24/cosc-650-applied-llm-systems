@@ -82,3 +82,11 @@ Github Copilot was used to:
 * Use `research-finding-issue.prompt.md` to create the first draft of a research GH issue
 * Use `issue-linked-git-workflow/SKILL.md` to create the PR draft
 * Microsoft Foundry Synthetic Datasets for Fine tuning were created with GPT-5.4
+
+### Week 8
+Github Copilot was used to:
+* Edit my hand typed analysis, making it more concise and grammatically correct
+* Generate portions of code based on requested analysis
+* Summarize findings and create the `findings.md`
+* Use `research-finding-issue.prompt.md` to create the first draft of a research GH issue
+* Use `issue-linked-git-workflow/SKILL.md` to create the PR draft
