@@ -1,60 +1,77 @@
 # COSC 650: Applied LLM Systems
 
-Week-by-week implementations of applied LLM systems, covering tokenization, inference and sampling, prompt engineering, function/tool calling, retrieval-augmented generation, fine-tuning, and evaluation.
+An eight-week progression from tokenization fundamentals to an evaluated, observable LLM agent. The repository documents not only what was built, but also the experiments, failures, tradeoffs, and design decisions that shaped the final system.
 
-## Course Context
+## Capstone Snapshot
 
-COSC 650 is an eight-week graduate course in the M.S. in Artificial Intelligence program at Maryville University. The assignments are developed in local Jupyter Notebooks and submitted through GitHub, reviewed through pull requests, and revised in response to feedback.
+The capstone is a Microsoft Agent Framework application that classifies supplemental patient feedback into HCAHPS-aligned themes. It combines version-controlled prompts, schema-validated tools, dynamic few-shot retrieval, JEV reranking, and MLflow evaluation in one traceable workflow.
 
-The repository is built to be read by humans and LLMs. The goal is disciplined documentation that gives assistants rich context for key decisions and rationale. After each assignment, `findings.md` records the measured results and analysis, GitHub Issues preserve the primary findings as research notes, and pull requests link the completed work to those notes. `AGENTS.md` at the root gives an AI assistant the project's structure and conventions at the start of every session. It also discloses each week's AI usage under the COSC 650 course policy.
+| Held-out evaluation result | Score |
+| --- | ---: |
+| Theme label exact match | 100% (20/20) |
+| Confidence exact match | 95% (19/20) |
+| Expected label retrieved in top 3 | 100% |
+| Tool-call correctness and efficiency | 100% |
+| Retrieval groundedness | 55% |
 
-## Applied Context Infrastructure
+The lower groundedness score is an important result rather than a hidden blemish. Failure analysis showed that relevant examples did not always support every detail of the generated rationale or confidence level.
 
-The repository also treats context engineering as part of applied LLM systems work. Version-controlled instructions give coding agents durable project conventions, path-specific guidance constrains how they interact with course notebooks, and agent skills package recurring GitHub workflow tasks. This makes the context supplied to an assistant visible, reviewable, and reusable instead of relying only on ad hoc chat prompts.
+**Start here:** [Capstone overview](week-8/README.md) | [Executed notebook](week-8/capstone_llm_system.ipynb) | [Evaluation findings](week-8/findings.md)
 
+## Example Classification Trace
 
-## Weekly Modules
+![MLflow trace showing the classification, retrieval, reranking, agent, and tool spans](week-8/trace-images/trace.png)
 
-| Week | Topic |
-|------|-------|
-| 0 | Setup |
-| 1 | Tokenization and text representation |
-| 2 | Architecture, inference, and sampling |
-| 3 | Systematic prompt engineering |
-| 4 | Function calling and tool use |
-| 5 | Retrieval-augmented generation foundations |
-| 6 | Advanced RAG and knowledge systems |
-| 7 | Fine-tuning and adaptation |
-| 8 | Evaluation, testing, QA, integration, and the final course capstone project (located in `week-8/`) |
+## Techniques and Decisions
 
-## Repo Structure
+| Technique | Why it was chosen |
+| --- | --- |
+| Version-controlled prompts | Keeps instructions, model configuration, and classifier behavior reviewable and reproducible. |
+| Pydantic-validated tools | Lets the model interpret language while deterministic code validates state changes and calculates reports. |
+| PostgreSQL with pgvector | Provides inspectable vector storage and supports the local retrieval experiments developed in Weeks 5-7. |
+| Dynamic few-shot retrieval | Supplies task-relevant labeled examples without placing the entire dataset in every prompt. |
+| Decision-1 classification gate | Runs retrieval only for classification requests, avoiding unnecessary work for summaries and plots. |
+| JEV reranking | Rescores semantically similar candidates for task relevance before prompt assembly. |
+| MLflow tracing and evaluation | Connects aggregate metrics to the exact retrieval, model response, tool arguments, and judge rationale for each case. |
 
+## Eight-Week Progression
+
+Each week adds an engineering capability that becomes part of the final system. The linked findings record measured results, a failure case, and the resulting design lesson.
+
+| Week | Capability and outcome | Evidence |
+| --- | --- | --- |
+| 1 | Compared tokenizers and quantified tokenization bias, cost, and context effects. | [Findings](week-1/findings.md) |
+| 2 | Measured how temperature, top-k, and top-p interact instead of treating sampling controls independently. | [Findings](week-2/findings.md) |
+| 3 | Treated prompts as version-controlled artifacts and improved classifier label accuracy from 90% to 100%. | [Findings](week-3/findings.md) |
+| 4 | Added schema-validated tools and studied multi-tool ordering and error handling. | [Findings](week-4/findings.md) |
+| 5 | Built and evaluated a pgvector RAG pipeline across chunking and embedding strategies. | [Findings](week-5/findings.md) |
+| 6 | Added query transformation, reciprocal rank fusion, and JEV reranking while measuring quality-latency tradeoffs. | [Findings](week-6/findings.md) |
+| 7 | Compared zero-shot and dynamic few-shot adaptation, then chose source-grounded RAG over premature fine-tuning. | [Findings](week-7/findings.md) |
+| 8 | Integrated prompting, tools, retrieval, reranking, tracing, deterministic metrics, and LLM judges into the capstone. | [Findings](week-8/findings.md) |
+
+## Repository Guide
+
+```text
+.github/                Version-controlled agent instructions, prompts, and workflow skills
+docker/                 Local MLflow and PostgreSQL/pgvector services
+notes/                  Reading notes and weekly research-workflow drafts
+week-1/ ... week-7/     Progressive experiments, notebooks, and findings
+week-8/                 Capstone application, evaluation, documentation, and traces
+AGENTS.md               Project conventions and course AI-use disclosures
 ```
-.github/                Context instructions, prompts, and workflow skills
-docker/                 Local PostgreSQL/pgvector service for RAG
-week-N/                 Setup and weekly assignments (weeks 0 through 8)
-AGENTS.md               Project context and conventions, read by AI assistants
-README.md               This file
-```
 
-The [`.github` context infrastructure guide](.github/CONTEXT_INFRASTRUCTURE.md) explains how each customization supports the coursework.
+The [context infrastructure guide](.github/CONTEXT_INFRASTRUCTURE.md) explains how repository instructions, path-specific notebook guidance, reusable prompts, and agent skills make AI-assisted work visible and reviewable.
 
-## Technologies
+## Stack
 
-- **Python 3.14+** for all code
-- **VS Code** for development
-- **Local Jupyter** for notebooks
-- **GitHub Copilot in VS Code** for AI-assisted development (see .github/ and AGENTS.md)
-- **UV** for Python dependency and environment management
-- **tiktoken** for tokenization experiments
-- **OpenAI, Azure OpenAI, and models hosted in Microsoft Foundry** for generation, tool use, embeddings, synthetic data generation, and evaluation
-- **`all-MiniLM-L6-v2`** for local embeddings and **`text-embedding-3-small`** hosted in Microsoft Foundry for hosted embeddings
-- **PostgreSQL with pgvector in Docker** as the local vector database for the RAG work
-- **Reciprocal Rank Fusion (RRF)** adapted from Adrian Raudaschl's [RAG-Fusion](https://github.com/Raudaschl/rag-fusion) implementation for combining ranked retrieval results
-- **Jev System One reranking**, based on the [RAG-Fusion Jev experiment](https://github.com/Raudaschl/rag-fusion/tree/master/experiments/jev-in-the-pipeline) and Adam Hevenor's [hev reranker](https://github.com/hev/reranker), for rescoring candidates by estimated relevance
-- Additional libraries added per week as the material calls for them
+Python 3.14+, local Jupyter, UV, Microsoft Agent Framework, Microsoft Foundry, OpenAI and Azure OpenAI models, PostgreSQL with pgvector, Pydantic, MLflow, `text-embedding-3-small`, `all-MiniLM-L6-v2`, RRF, and JEV reranking.
 
+## Scope and Reproducibility
+
+The capstone organizes synthetic supplemental patient comments into **HCAHPS-aligned feedback themes**. It does not administer the official HCAHPS survey or calculate CMS HCAHPS scores. Detailed scope boundaries and official sources are documented in the [capstone README](week-8/README.md).
+
+Experiments run in local Jupyter notebooks with dependencies managed by UV. Secrets stay in the local `.env` file. Weekly findings preserve configurations, measurements, limitations, and failure analyses alongside the executable work.
 
 ## Author
 
-Brett — M.S. Artificial Intelligence candidate, Maryville University (December 2026)
+Brett - M.S. Artificial Intelligence candidate, Maryville University (December 2026)
