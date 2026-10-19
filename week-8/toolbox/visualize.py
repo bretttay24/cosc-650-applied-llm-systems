@@ -43,11 +43,14 @@ def plot_distribution(group_by: PlotGroupByField, context: FunctionInvocationCon
     labels = list(counts_by_category)
     counts = list(counts_by_category.values())
 
-    artifact_directory = Path("artifacts")
+    if context.session is None:
+        raise RuntimeError("Plotting classifications requires an active agent session")
+
+    artifact_directory = Path("artifacts") / context.session.session_id
     artifact_directory.mkdir(parents=True, exist_ok=True)
     artifact_path = artifact_directory / f"hcahps_{group_by}_distribution.png"
 
-    with start_span(name="plot_artifact", span_type=SpanType.TOOL) as span:
+    with start_span(name="plot_artifact", span_type=SpanType.CHAIN) as span:
         span.set_inputs({"group_by": group_by, "category_count": len(labels)})
 
         figure, axis = plt.subplots(figsize=(10, 5))

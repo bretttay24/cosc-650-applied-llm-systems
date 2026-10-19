@@ -40,6 +40,10 @@ class ClassificationLedger:
         """Remove all recorded classifications from the ledger."""
         self._entries.clear()
 
+    def get(self, comment_id: int) -> ClassificationEntry:
+        """Return the recorded classification for one comment."""
+        return self._entries[comment_id].copy()
+
     def record(self, comment_id: int, label: HcahpsTheme, confidence: ConfidenceLevel, rationale: str) -> dict[str, int | str]:
         """Record one classification and return its updated ledger counts."""
         if comment_id in self._entries:
