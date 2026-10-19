@@ -1,6 +1,7 @@
 """Agent middleware that adds retrieved examples to classification requests."""
 
 import asyncio
+import json
 import logging
 import os
 from collections.abc import Awaitable, Callable
@@ -8,10 +9,10 @@ from typing import Any
 
 import mlflow
 from agent_framework import AgentContext, AgentMiddleware, Message
-from azure.identity import DefaultAzureCredential, get_bearer_token_provider
+from azure.identity.aio import DefaultAzureCredential, get_bearer_token_provider
 from dotenv import load_dotenv
 from mlflow.entities import SpanType
-from typesafe_sdk import Noul, TypeSafeClient
+from typesafe_sdk import AsyncTypeSafeClient, Noul
 
 load_dotenv()
 
@@ -33,23 +34,23 @@ DECISION_ENDPOINT = f"{RESOURCE_ENDPOINT}/providers/microsoft"
 LOGGER = logging.getLogger(__name__)
 
 
-def _call_decision_api(query: str) -> float:
-    with DefaultAzureCredential() as credential:
+async def _call_decision_api(query: str) -> float:
+    async with DefaultAzureCredential() as credential:
         token_provider = get_bearer_token_provider(credential, TOKEN_SCOPE)
-        with (
-            TypeSafeClient(api_key=token_provider(), base_url=DECISION_ENDPOINT, model=DECISION_MODEL, timeout=DECISION_TIMEOUT_SECONDS) as client,
-            mlflow.start_span(name="decision_model_call", span_type=SpanType.LLM) as span,
-        ):
-            span.set_inputs({"text": query, "model": DECISION_MODEL})
-            response = client.system_one(
-                state=query, questions={"needs_classification": Noul(instructions="Is this user query asking for a classification task, or does it need classification?")}
-            )
-            token_usage = {key: value for key, value in {"input_tokens": response.usage.input_tokens, "output_tokens": response.usage.output_tokens}.items() if value is not None}
-            if token_usage:
-                token_usage["total_tokens"] = sum(token_usage.values())
-                span.set_attributes({"mlflow.chat.tokenUsage": token_usage, "mlflow.llm.model": response.model})
-            classification_request_probability = float(response.nouls["needs_classification"].noul)
-            span.set_outputs({"needs_classification": {"probability": classification_request_probability}})
+        async with AsyncTypeSafeClient(api_key=await token_provider(), base_url=DECISION_ENDPOINT, model=DECISION_MODEL, timeout=DECISION_TIMEOUT_SECONDS) as client:
+            with mlflow.start_span(name="decision_model_call", span_type=SpanType.LLM) as span:
+                span.set_inputs({"text": query, "model": DECISION_MODEL})
+                response = await client.system_one(
+                    state=query, questions={"needs_classification": Noul(instructions="Is this user query asking for a classification task, or does it need classification?")}
+                )
+                token_usage = {
+                    key: value for key, value in {"input_tokens": response.usage.input_tokens, "output_tokens": response.usage.output_tokens}.items() if value is not None
+                }
+                if token_usage:
+                    token_usage["total_tokens"] = sum(token_usage.values())
+                    span.set_attributes({"mlflow.chat.tokenUsage": token_usage, "mlflow.llm.model": response.model})
+                classification_request_probability = float(response.nouls["needs_classification"].noul)
+                span.set_outputs({"needs_classification": {"probability": classification_request_probability}})
 
     if not 0.0 <= classification_request_probability <= 1.0:
         raise ValueError("Decision-1 returned a probability outside [0, 1]")
@@ -58,7 +59,7 @@ def _call_decision_api(query: str) -> float:
 
 async def classification_probability(query: str) -> float:
     """Return Decision-1's calibrated probability that the query needs classification."""
-    return await asyncio.wait_for(asyncio.to_thread(_call_decision_api, query), timeout=DECISION_TIMEOUT_SECONDS + 1.0)
+    return await asyncio.wait_for(_call_decision_api(query), timeout=DECISION_TIMEOUT_SECONDS + 1.0)
 
 
 def _retrieve_sync(query: str) -> list[dict[str, Any]]:
@@ -67,18 +68,22 @@ def _retrieve_sync(query: str) -> list[dict[str, Any]]:
     from local_rag.retrievers import retrieve
 
     search_query = query.removeprefix(CLASSIFICATION_PREFIX).strip()
-    with connect_database() as connection:
-        results = retrieve(
-            connection,
-            search_query,
-            embedders=EMBEDDER_NAME,
-            chunkers=TRAINING_CHUNKER,
-            retrieval_k=RETRIEVAL_COUNT,
-            pool_k=RETRIEVAL_COUNT,
-            final_k=FINAL_EXAMPLE_COUNT,
-            jev_rerank=True,
-        )
-    return results[EMBEDDER_NAME]
+    with mlflow.start_span(name="few_shot_retrieval", span_type=SpanType.RETRIEVER) as span:
+        span.set_inputs({"query": search_query})
+        with connect_database() as connection:
+            results = retrieve(
+                connection,
+                search_query,
+                embedders=EMBEDDER_NAME,
+                chunkers=TRAINING_CHUNKER,
+                retrieval_k=RETRIEVAL_COUNT,
+                pool_k=RETRIEVAL_COUNT,
+                final_k=FINAL_EXAMPLE_COUNT,
+                jev_rerank=True,
+            )
+        final_examples = results[EMBEDDER_NAME]
+        span.set_outputs([{"page_content": example["content"], "metadata": {"chunk_uid": example["chunk_uid"], "source": example["source"]}} for example in final_examples])
+        return final_examples
 
 
 def format_enriched_query(query: str, examples: list[dict[str, Any]]) -> str:
@@ -98,6 +103,7 @@ class DynamicPromptingMiddleware(AgentMiddleware):
         classification_request_probability: float | None = None
         threshold_met = False
         final_ids: list[str] = []
+        retrieved_example_labels: list[str] = []
         enriched = False
 
         try:
@@ -118,6 +124,10 @@ class DynamicPromptingMiddleware(AgentMiddleware):
 
                     final_examples = await asyncio.wait_for(asyncio.to_thread(_retrieve_sync, query), timeout=RETRIEVAL_TIMEOUT_SECONDS)
                     final_ids = [str(candidate.get("chunk_uid", "")) for candidate in final_examples]
+                    retrieved_example_labels = [
+                        (json.loads(candidate["meta"]["answer"]) if isinstance(candidate["meta"]["answer"], str) else candidate["meta"]["answer"])["label"]
+                        for candidate in final_examples
+                    ]
                     with mlflow.start_span(name="few_shot_prompt_assembly", span_type=SpanType.PARSER) as prompt_span:
                         prompt_inputs: dict[str, Any] = {"reranked_example_ids": final_ids}
                         if ENABLE_SENSITIVE_DATA:
@@ -141,6 +151,7 @@ class DynamicPromptingMiddleware(AgentMiddleware):
                             "classification_request_probability": classification_request_probability,
                             "threshold_met": threshold_met,
                             "retrieved_example_ids": final_ids,
+                            "retrieved_labels": retrieved_example_labels,
                             "example_count": len(final_ids),
                             "enriched": enriched,
                         }
